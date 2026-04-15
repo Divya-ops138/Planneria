@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sign Up - Planneria</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <style>
+    body { background-color: lavenderblush; font-family: 'DM Sans', sans-serif; }
+    h2   { color: palevioletred; text-align: center; margin-top: 50px; font-weight: bold; }
+
+    .card {
+      border: none;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px rgba(219,112,147,0.15);
+      padding: 32px;
+      background: #fff;
+    }
+
+    .pink-btn {
+      background-color: palevioletred;
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      padding: 10px 30px;
+      font-weight: bold;
+      width: 100%;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .pink-btn:hover { background-color: #c85a82; }
+
+    #statusMsg {
+      text-align: center;
+      font-size: 0.9rem;
+      min-height: 20px;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>💕 Join Planneria</h2>
+
+  <div class="container mt-4">
+    <div class="row justify-content-center">
+      <div class="col-md-5">
+        <div class="card">
+          <h4 class="text-center mb-4" style="color: palevioletred;">Create Account</h4>
+
+          <div class="mb-3">
+            <label class="form-label fw-bold">Name</label>
+            <input type="text" id="name" class="form-control" placeholder="Your full name"/>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-bold">Email</label>
+            <input type="email" id="email" class="form-control" placeholder="Your email"/>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-bold">Password</label>
+            <input type="password" id="password" class="form-control" placeholder="Choose a password"/>
+          </div>
+
+          <button class="pink-btn" onclick="signup()">Create Account</button>
+
+          <div id="statusMsg"></div>
+
+          <p class="text-center mt-3" style="font-size:0.9rem;">
+            Already have an account?
+            <a href="login.html" style="color: palevioletred;">Login</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API = "http://127.0.0.1:5000";
+
+    function signup() {
+      const name      = document.getElementById("name").value.trim();
+      const email     = document.getElementById("email").value.trim();
+      const password  = document.getElementById("password").value.trim();
+      const statusMsg = document.getElementById("statusMsg");
+
+      statusMsg.innerText = "";
+      statusMsg.style.color = "red";
+
+      // Frontend validation
+      if (!name || !email || !password) {
+        statusMsg.innerText = "Please fill in all fields.";
+        return;
+      }
+
+      fetch(API + "/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success || data.message === "User created") {
+          // ── AUTO-LOGIN: store user_id and name, then go to dashboard ──
+          localStorage.setItem("user_id", data.user_id);
+          localStorage.setItem("user_name", data.name);
+
+          statusMsg.style.color = "green";
+          statusMsg.innerText = "✅ Account created! Redirecting...";
+
+          setTimeout(() => {
+            window.location.href = "index.html";
+          }, 1200);
+        } else {
+          // Show backend error (e.g. "Email already registered")
+          statusMsg.innerText = data.error || "Signup failed. Please try again.";
+        }
+      })
+      .catch(err => {
+        console.error("Signup error:", err);
+        statusMsg.innerText = "Could not connect to server. Please try again.";
+      });
+    }
+  </script>
+
+</body>
+</html>
