@@ -7,8 +7,9 @@ A beautiful, responsive study planner web app made with HTML, CSS,Bootstrap,flas
 ✅ Task progress bar
 🎠 Image carousel
 💕 Custom footer with contact info
+
 🖥️ Live Demo:
-🔗 Click here to view the website
+🔗https://divya-ops138.github.io/Study-planner/
 
 🚀 Built With:
 HTML5
